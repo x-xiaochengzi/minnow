@@ -10,7 +10,35 @@ using namespace std;
 void get_URL( const string& host, const string& path )
 {
   cerr << "Function called: get_URL(" << host << ", " << path << ")\n";
-  cerr << "Warning: get_URL() has not been implemented yet.\n";
+  // cerr << "Warning: get_URL() has not been implemented yet.\n";
+
+  /**
+   * To create a tcp connection, we need to konw the destination ip address and port number.
+   * The port number is well-known, decided by the HTTP service.
+   *
+   */
+  // address
+  Address addr { host, "http" };
+
+  // creating a tcp connection
+  TCPSocket tcp;
+  tcp.connect( addr );
+
+  // sending request
+  tcp.write( "GET " + path + " HTTP/1.1\r\n" );
+  tcp.write( "Host: " + host + "\r\n" );
+  tcp.write( "Connection: close\r\n" );
+  tcp.write( "\r\n" );
+
+  // print the response
+  string buffer;
+  while ( !tcp.eof() ) {
+    tcp.read( buffer );
+    cout << buffer;
+    cout.clear();
+  }
+  // close socket
+  tcp.close();
 }
 
 int main( int argc, char* argv[] )
